@@ -3,8 +3,9 @@
   --color-text: #1a1a1a;
   --color-accent: #0057b8;
   --color-accent-hover: #003d82;
+  --color-on-accent: #ffffff;
   --color-surface: #f4f4f4;
-  --font-body: 'system-ui', sans-serif;
+  --font-body: system-ui, sans-serif;
   --font-size-base: 1.25rem;
   --font-size-sm: 1rem;
   --font-size-h1: clamp(1.75rem, 4vw, 2.5rem);
@@ -24,6 +25,8 @@
     --color-text: #e8e8e8;
     --color-surface: #1e1e1e;
     --color-accent: #6eb4ff;
+    --color-accent-hover: #a8d1ff;
+    --color-on-accent: #0f0f0f;
   }
 }
 
@@ -50,7 +53,7 @@ main {
   left: 0;
   padding: var(--space-s) var(--space-m);
   background: var(--color-accent);
-  color: #fff;
+  color: var(--color-on-accent);
   z-index: 100;
   text-decoration: none;
   font-weight: 700;
@@ -91,14 +94,14 @@ nav a[aria-current="page"] { border-bottom: 3px solid currentColor; }
   min-height: var(--touch-target);
   padding: var(--space-s) var(--space-m);
   background: var(--color-accent);
-  color: #fff;
+  color: var(--color-on-accent);
   border-radius: var(--radius);
   font-weight: 700;
   text-decoration: none;
   margin-top: var(--space-m);
 }
 .cta-link:hover,
-.cta-link:focus { background: var(--color-accent-hover); }
+.cta-link:focus { background: var(--color-accent-hover); color: var(--color-on-accent); }
 
 /* Category list on homepage */
 .category-list {

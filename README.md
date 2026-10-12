@@ -1,6 +1,6 @@
 # Teknikguider
 
-Swedish beginner tech education site — live at **https://teknikguider.pages.dev**
+Swedish beginner tech education site. Repository: **github.com/Haxxsimd/beginner-tech-guides**. Not yet deployed — see [Deploying to Cloudflare Pages](#deploying-to-cloudflare-pages).
 
 Tydliga guider om datorteknik på svenska, skrivna för alla.
 
@@ -8,7 +8,7 @@ Tydliga guider om datorteknik på svenska, skrivna för alla.
 
 ## Development
 
-**Prerequisites:** Node.js 20+, npm
+**Prerequisites:** Node.js 22.12+ (see `.node-version`), npm
 
 ```bash
 npm install
@@ -35,8 +35,11 @@ teknikguider/
 │   │   └── sv.ts            # Swedish UI strings
 │   ├── layouts/
 │   │   └── BaseLayout.astro # Page wrapper with nav and footer
+│   ├── lib/
+│   │   └── formatDate.ts    # Shared sv-SE date formatting (UTC-anchored)
 │   ├── pages/
 │   │   ├── index.astro      # Homepage
+│   │   ├── 404.astro        # Not-found page
 │   │   └── guider/
 │   │       ├── index.astro  # Guide listing
 │   │       └── [slug].astro # Individual guide page
@@ -72,11 +75,12 @@ draft: false               # set true to hide from listings
 ### Dashboard (recommended)
 
 1. Go to [Cloudflare Pages](https://pages.cloudflare.com/) and create a new project.
-2. Connect to the `haxxsimd/teknikguider` GitHub repository.
+2. Connect to the `Haxxsimd/beginner-tech-guides` GitHub repository.
 3. Set build settings:
    - **Build command:** `npm run build`
    - **Build output directory:** `dist`
-4. Add environment variable: `NODE_VERSION` = `20`
+   - **Project name:** `teknikguider` (keeps `astro.config.mjs`'s `site` URL accurate; Cloudflare defaults to the repo name otherwise — update `site` to match if you pick something else)
+4. Add environment variable: `NODE_VERSION` = `22`
 5. Deploy. Cloudflare Pages will redeploy automatically on every push to `main`.
 
 ### Manual CLI
@@ -90,11 +94,11 @@ npx wrangler pages deploy dist --project-name teknikguider
 
 The site uses an additive i18n pattern. To add English:
 
-1. Create `src/i18n/en.ts` mirroring `sv.ts` with English translations.
-2. Add `'en'` to the `locales` array in `src/i18n/index.ts`.
+1. Create `src/i18n/en.ts` mirroring `sv.ts`'s shape (`Partial<Record<UIStringKey, string>>`) with English translations.
+2. Add `'en'` to the `locales` array and `{ sv, en }` to the translations map in `src/i18n/index.ts`.
 3. Add English pages under `src/pages/en/` (e.g. `src/pages/en/index.astro`).
 
-No existing Swedish files need to change.
+`BaseLayout` and `Nav` read the locale from the URL via `getLangFromUrl` — they set `<html lang>` and localize nav hrefs automatically, with no changes needed to the components themselves or to any existing Swedish page.
 
 ## Accessibility
 

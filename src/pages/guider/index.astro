@@ -1,6 +1,11 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { formatDate } from '../../lib/formatDate';
+import { getLangFromUrl, useTranslations } from '../../i18n/index';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 
 const allGuides = await getCollection('guider', ({ data }) => data.draft !== true);
 const sorted = allGuides.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
@@ -9,11 +14,11 @@ const sorted = allGuides.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDat
   title="Guider — Teknikguider"
   description="Alla guider om datorteknik på svenska. Enkla förklaringar för alla."
 >
-  <h1>Guider</h1>
-  <p>Tydliga guider om datorteknik — skrivna för dig som inte är expert.</p>
+  <h1>{t('guides.heading')}</h1>
+  <p>{t('guides.intro')}</p>
 
   {sorted.length === 0 ? (
-    <p>Inga guider publicerade ännu. Kom tillbaka snart!</p>
+    <p>{t('guides.empty')}</p>
   ) : (
     <ul class="guide-list">
       {sorted.map((guide) => (
@@ -24,9 +29,9 @@ const sorted = allGuides.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDat
               <span class="category">{guide.data.category}</span>
               {' · '}
               <time datetime={guide.data.pubDate.toISOString()}>
-                {guide.data.pubDate.toLocaleDateString('sv-SE', { year: 'numeric', month: 'long', day: 'numeric' })}
+                {formatDate(guide.data.pubDate)}
               </time>
-              {guide.data.readingTimeMinutes && ` · ${guide.data.readingTimeMinutes} min`}
+              {guide.data.readingTimeMinutes != null && ` · ${t('guide.readingTime', { minutes: guide.data.readingTimeMinutes })}`}
             </p>
             <p>{guide.data.description}</p>
           </a>

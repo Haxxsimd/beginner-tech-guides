@@ -19,7 +19,7 @@ Förkortningen BIOS står för *Basic Input/Output System*. Moderna datorer anv�
 
 Nej, inte genom att bara öppna det. Att titta runt i BIOS är helt ofarligt.
 
-Det som faktiskt kan orsaka problem är att *ändra inställningar* du inte förstår — till exempel om du råkar stänga av rätt hårddisk eller ändra startordningen. Men det är lätt att ångra: de flesta BIOS har ett alternativ som heter "Load Defaults" eller "Återställ standardinställningar" som tar dig tillbaka till hur det var från början.
+Det som faktiskt kan orsaka problem är att *ändra inställningar* du inte förstår — till exempel om du råkar stänga av fel hårddisk eller ändra startordningen. Men det är lätt att ångra: de flesta BIOS har ett alternativ som heter "Load Defaults" eller "Återställ standardinställningar" som tar dig tillbaka till hur det var från början.
 
 Kort sagt: titta gärna, men tänk till innan du ändrar något.
 
@@ -47,14 +47,16 @@ Det ser gammaldags ut med avsikt. Det är en enkel miljö som ska fungera *innan
 
 ## Vad ska jag inte röra?
 
+> **Innan du ändrar något:** om din dator har Windows med kryptering (BitLocker) kan ändringar i BIOS — särskilt Secure Boot och startordning — göra att Windows ber om en lång återställningsnyckel vid nästa start. Ta reda på var din BitLocker-nyckel finns (ofta kopplad till ditt Microsoft-konto) *innan* du ändrar något, så att du inte riskerar att låsas ute.
+
 Som nybörjare är det klokt att lämna följande ifred:
 
 - **Processor- och minnesinställningar** — att overclocka fel kan göra datorn instabil
-- **Secure Boot** — stänger du av det kan datorn vägra starta i värsta fall
+- **Secure Boot** — att stänga av det gör i sig sällan att datorn vägrar starta, men det kan trigga en BitLocker-återställningsprompt (se ovan) och gör datorn mer sårbar för skadlig kod som startar innan Windows
 - **Spänningsinställningar** — dessa kan påverka hårdvarans livslängd
 - **Inbyggda enheter** — stänger du av fel enhet kanske tangentbordet slutar fungera
 
-Om du råkat ändra något och datorn beter sig konstigt: leta efter alternativet **"Load Optimized Defaults"** eller **"Restore Factory Settings"** i BIOS. Det återställer allting till hur det var.
+Om du råkat ändra något och datorn beter sig konstigt: leta efter alternativet **"Load Optimized Defaults"** eller **"Restore Factory Settings"** i BIOS. Det återställer fabriksinställningarna — inte nödvändigtvis exakt det du hade innan — men är oftast det säkraste sättet att reda ut ett misstag. Detta kan också trigga en BitLocker-prompt, se rutan ovan.
 
 ## Sammanfattning
 

@@ -1,6 +1,7 @@
 ---
 import BaseHead from '../components/BaseHead.astro';
 import Nav from '../components/Nav.astro';
+import { getLangFromUrl } from '../i18n/index';
 import '../styles/global.css';
 
 interface Props {
@@ -8,9 +9,10 @@ interface Props {
   description: string;
 }
 const { title, description } = Astro.props;
+const lang = getLangFromUrl(Astro.url);
 ---
 <!DOCTYPE html>
-<html lang="sv">
+<html lang={lang}>
   <head>
     <BaseHead title={title} description={description} />
   </head>

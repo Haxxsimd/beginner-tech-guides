@@ -1,4 +1,19 @@
-export const sv = {
+export type UIStringKey =
+  | 'nav.home'
+  | 'nav.guides'
+  | 'a11y.skipToContent'
+  | 'a11y.nav.label'
+  | 'home.hero.heading'
+  | 'home.hero.body'
+  | 'home.hero.cta'
+  | 'home.categories.heading'
+  | 'guides.heading'
+  | 'guides.intro'
+  | 'guides.empty'
+  | 'guide.readingTime'
+  | 'footer.copyright';
+
+export const sv: Record<UIStringKey, string> = {
   'nav.home': 'Hem',
   'nav.guides': 'Guider',
   'a11y.skipToContent': 'Hoppa till innehåll',
@@ -12,6 +27,4 @@ export const sv = {
   'guides.empty': 'Inga guider publicerade ännu. Kom tillbaka snart!',
   'guide.readingTime': '{minutes} min läsning',
   'footer.copyright': '© {year} Teknikguider',
-} as const;
-
-export type UIStringKey = keyof typeof sv;
+};
