@@ -1,6 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import Comments from '../../components/Comments.astro';
 import { formatDate } from '../../lib/formatDate';
 import { getLangFromUrl, useTranslations } from '../../i18n/index';
 
@@ -35,4 +36,5 @@ const { title, description, pubDate, category, readingTimeMinutes } = guide.data
     </header>
     <Content />
   </article>
+  <Comments slug={guide.id} lang={lang} />
 </BaseLayout>
