@@ -1,0 +1,37 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const allGuides = await getCollection('guider', ({ data }) => data.draft !== true);
+const sorted = allGuides.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+<BaseLayout
+  title="Guider — Teknikguider"
+  description="Alla guider om datorteknik på svenska. Enkla förklaringar för alla."
+>
+  <h1>Guider</h1>
+  <p>Tydliga guider om datorteknik — skrivna för dig som inte är expert.</p>
+
+  {sorted.length === 0 ? (
+    <p>Inga guider publicerade ännu. Kom tillbaka snart!</p>
+  ) : (
+    <ul class="guide-list">
+      {sorted.map((guide) => (
+        <li class="guide-card">
+          <a href={`/guider/${guide.id}/`}>
+            <h2>{guide.data.title}</h2>
+            <p class="guide-meta">
+              <span class="category">{guide.data.category}</span>
+              {' · '}
+              <time datetime={guide.data.pubDate.toISOString()}>
+                {guide.data.pubDate.toLocaleDateString('sv-SE', { year: 'numeric', month: 'long', day: 'numeric' })}
+              </time>
+              {guide.data.readingTimeMinutes && ` · ${guide.data.readingTimeMinutes} min`}
+            </p>
+            <p>{guide.data.description}</p>
+          </a>
+        </li>
+      ))}
+    </ul>
+  )}
+</BaseLayout>

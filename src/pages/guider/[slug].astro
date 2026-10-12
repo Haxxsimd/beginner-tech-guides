@@ -1,0 +1,33 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const guides = await getCollection('guider', ({ data }) => data.draft !== true);
+  return guides.map((guide) => ({
+    params: { slug: guide.id },
+    props: { guide },
+  }));
+}
+
+const { guide } = Astro.props;
+const { Content } = await render(guide);
+const { title, description, pubDate, category, readingTimeMinutes } = guide.data;
+---
+<BaseLayout title={`${title} — Teknikguider`} description={description}>
+  <article>
+    <header>
+      <h1>{title}</h1>
+      <p class="guide-meta">
+        <span class="category">{category}</span>
+        {' · '}
+        <time datetime={pubDate.toISOString()}>
+          {pubDate.toLocaleDateString('sv-SE', { year: 'numeric', month: 'long', day: 'numeric' })}
+        </time>
+        {readingTimeMinutes && ` · ${readingTimeMinutes} min läsning`}
+      </p>
+      <p class="lead">{description}</p>
+    </header>
+    <Content />
+  </article>
+</BaseLayout>
