@@ -90,6 +90,17 @@ npm run build
 npx wrangler pages deploy dist --project-name teknikguider
 ```
 
+## Comments (Supabase)
+
+Guide pages show moderated reader comments backed by Supabase. Without the env vars below the comments section is simply not rendered.
+
+1. Create a Supabase project and run `supabase/migrations/20261012000000_comments.sql` (SQL Editor, or `supabase db push`).
+2. Copy `.env.example` to `.env` and fill in `PUBLIC_SUPABASE_URL` and `PUBLIC_SUPABASE_PUBLISHABLE_KEY`. Use the publishable key only, never the `service_role`/secret key.
+3. In Cloudflare Pages → Settings → Environment variables, add the same two variables **before** building (Astro inlines them at build time), then redeploy.
+4. Approve comments in the Supabase dashboard: Table Editor → `comments` → set `status` to `approved`.
+
+Visitors can only read approved comments and insert pending ones (row level security). A hidden honeypot field and a 3-second minimum delay filter simple bots; add Cloudflare Turnstile if spam becomes a problem.
+
 ## i18n — Adding English
 
 The site uses an additive i18n pattern. To add English:

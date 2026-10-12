@@ -1,0 +1,120 @@
+---
+import { supabaseConfigured } from '../lib/supabase';
+import { useTranslations, type Locale } from '../i18n/index';
+
+interface Props {
+  slug: string;
+  lang: Locale;
+}
+const { slug, lang } = Astro.props;
+const t = useTranslations(lang);
+const messages = {
+  empty: t('comments.empty'),
+  loadError: t('comments.loadError'),
+  success: t('comments.success'),
+  error: t('comments.error'),
+};
+---
+{supabaseConfigured && (
+  <section
+    class="comments"
+    aria-labelledby="comments-heading"
+    data-slug={slug}
+    data-lang={lang}
+    data-messages={JSON.stringify(messages)}
+  >
+    <h2 id="comments-heading">{t('comments.heading')}</h2>
+    <p class="comments-status" data-list-status role="status">{t('comments.loading')}</p>
+    <ul class="comment-list" data-list></ul>
+
+    <h3>{t('comments.formHeading')}</h3>
+    <p class="comments-notice">{t('comments.notice')}</p>
+    <form class="comment-form" data-form>
+      <label for="comment-name">{t('comments.name')}</label>
+      <input id="comment-name" name="name" type="text" required maxlength="60" autocomplete="nickname" />
+      <label for="comment-body">{t('comments.body')}</label>
+      <textarea id="comment-body" name="body" required maxlength="2000" rows="5"></textarea>
+      <div class="comment-hp" aria-hidden="true">
+        <label for="comment-website">Website</label>
+        <input id="comment-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+      </div>
+      <button type="submit" class="cta-link">{t('comments.submit')}</button>
+      <p class="comments-status" data-form-status role="status"></p>
+    </form>
+  </section>
+)}
+
+<script>
+  import { getSupabase } from '../lib/supabase';
+
+  const root = document.querySelector<HTMLElement>('.comments');
+  if (root) {
+    const slug = root.dataset.slug ?? '';
+    const lang = root.dataset.lang ?? 'sv';
+    const msg = JSON.parse(root.dataset.messages ?? '{}');
+    const list = root.querySelector<HTMLUListElement>('[data-list]')!;
+    const listStatus = root.querySelector<HTMLElement>('[data-list-status]')!;
+    const form = root.querySelector<HTMLFormElement>('[data-form]')!;
+    const formStatus = root.querySelector<HTMLElement>('[data-form-status]')!;
+    const loadedAt = Date.now();
+
+    const supabase = getSupabase();
+
+    async function load() {
+      const { data, error } = await supabase
+        .from('comments')
+        .select('id, author_name, body, created_at')
+        .eq('guide_slug', slug)
+        .order('created_at', { ascending: true });
+      if (error) {
+        listStatus.textContent = msg.loadError;
+        return;
+      }
+      list.replaceChildren();
+      listStatus.textContent = data.length ? '' : msg.empty;
+      for (const c of data) {
+        const li = document.createElement('li');
+        const who = document.createElement('strong');
+        who.textContent = c.author_name;
+        const when = document.createElement('time');
+        when.dateTime = c.created_at;
+        when.textContent = new Date(c.created_at).toLocaleDateString(
+          lang === 'sv' ? 'sv-SE' : lang,
+          { timeZone: 'UTC' },
+        );
+        const p = document.createElement('p');
+        p.textContent = c.body;
+        li.append(who, ' · ', when, p);
+        list.append(li);
+      }
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fd = new FormData(form);
+      // Honeypot filled or submitted implausibly fast: pretend success, send nothing.
+      if (fd.get('website') || Date.now() - loadedAt < 3000) {
+        formStatus.textContent = msg.success;
+        form.reset();
+        return;
+      }
+      const button = form.querySelector<HTMLButtonElement>('button')!;
+      button.disabled = true;
+      // No .select() here: anon cannot read back pending rows.
+      const { error } = await supabase.from('comments').insert({
+        guide_slug: slug,
+        author_name: String(fd.get('name') ?? '').trim(),
+        body: String(fd.get('body') ?? '').trim(),
+      });
+      button.disabled = false;
+      if (error) {
+        formStatus.textContent = msg.error;
+        return;
+      }
+      formStatus.textContent = msg.success;
+      form.reset();
+    });
+
+    load();
+  }
+</script>
