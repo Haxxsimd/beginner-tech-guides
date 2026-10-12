@@ -1,0 +1,19 @@
+---
+const navLinks = [
+  { href: '/', label: 'Hem' },
+  { href: '/guider/', label: 'Guider' },
+];
+const currentPath = Astro.url.pathname;
+---
+<a class="skip-link" href="#main-content">Hoppa till innehåll</a>
+<nav aria-label="Huvudnavigering">
+  <ul>
+    {navLinks.map(({ href, label }) => (
+      <li>
+        <a href={href} aria-current={currentPath === href ? 'page' : undefined}>
+          {label}
+        </a>
+      </li>
+    ))}
+  </ul>
+</nav>
