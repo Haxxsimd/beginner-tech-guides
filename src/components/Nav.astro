@@ -1,12 +1,17 @@
 ---
+import { getLangFromUrl, useTranslations } from '../i18n/index';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
 const navLinks = [
-  { href: '/', label: 'Hem' },
-  { href: '/guider/', label: 'Guider' },
+  { href: '/', label: t('nav.home') },
+  { href: '/guider/', label: t('nav.guides') },
 ];
 const currentPath = Astro.url.pathname;
 ---
-<a class="skip-link" href="#main-content">Hoppa till innehåll</a>
-<nav aria-label="Huvudnavigering">
+<a class="skip-link" href="#main-content">{t('a11y.skipToContent')}</a>
+<nav aria-label={t('a11y.nav.label')}>
   <ul>
     {navLinks.map(({ href, label }) => (
       <li>
