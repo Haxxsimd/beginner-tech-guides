@@ -1,76 +1,108 @@
-# beginner-tech-guides
-My new website
+# Teknikguider
 
- # Beginner Tech Guides: Project Brief
+Swedish beginner tech education site — live at **https://teknikguider.pages.dev**
 
-*Brainstorm notes, 2026-10-12. Status: idea stage, not yet committed.*
+Tydliga guider om datorteknik på svenska, skrivna för alla.
 
-## The idea in one paragraph
-A trustworthy, free website that teaches beginners and older people practical tech, DIY and "it's less scary than you think" skills. Short social videos draw people in. The site builds trust with honest guides and no tricks. A cheap paid tier offers longer, step-by-step video guides for people who want to go deeper.
+---
 
-## Why me
-I like teaching and I'm good at making people listen when I explain computers, PCBs, Raspberry Pi/Arduino and embedded things. My message is that you don't need to be a genius, rich, or hire a technician to try things, and that valuable things online aren't always behind a trial or paywall.
+## Development
 
-I can put in 4-6 hours a day, sometimes more. Besides income, this is a way to use my knowledge and skills for something real, build a portfolio, and support my mental health.
+**Prerequisites:** Node.js 20+, npm
 
-## Audience
-- Beginners and older, non-technical people, mainly in Sweden to start.
-- Curious but put off by topics that feel too advanced or scary: AI, crypto, the dark web, home servers, BIOS.
-- They are cautious and have seen plenty of scams, so trust is the product.
+```bash
+npm install
+npm run dev      # Start dev server at http://localhost:4321
+npm run build    # Production build → dist/
+npm run preview  # Preview the production build locally
+```
 
-## Example hooks and guides
-- Run a small home server for your photos instead of paying for iCloud.
-- Enter the BIOS: the PC will not explode.
-- Everyday tips and tricks, DIY with cheap parts (Raspberry Pi, Arduino).
-- Explain AI, crypto and the dark web safely: how they work and what to watch out for.
+## Project Structure
 
-## Funnel
-1. **Social (Facebook, YouTube, then TikTok/Instagram):** short, hooky clips.
-2. **Free website (the hub):** written guides, images and short videos. No paywall, no trial, no scam feel.
-3. **Paid tier (optional, cheap):** longer step-by-step video guides, offered after trust is built.
+```
+teknikguider/
+├── public/
+│   └── favicon.svg
+├── src/
+│   ├── components/
+│   │   ├── BaseHead.astro   # <head> metadata (title, OG, canonical)
+│   │   └── Nav.astro        # Accessible navigation with skip-link
+│   ├── content/
+│   │   └── guider/          # MDX guide files
+│   ├── content.config.ts    # Content collection schema (Astro Content Layer)
+│   ├── i18n/
+│   │   ├── index.ts         # useTranslations(), getLangFromUrl()
+│   │   └── sv.ts            # Swedish UI strings
+│   ├── layouts/
+│   │   └── BaseLayout.astro # Page wrapper with nav and footer
+│   ├── pages/
+│   │   ├── index.astro      # Homepage
+│   │   └── guider/
+│   │       ├── index.astro  # Guide listing
+│   │       └── [slug].astro # Individual guide page
+│   └── styles/
+│       └── global.css       # CSS custom properties and base styles
+├── astro.config.mjs
+└── wrangler.toml
+```
 
-## Goals
-- **Primary:** real income, even if modest. I have no job, so this matters.
-- **Minimum:** cover running costs.
-- **Impact:** people feel it's useful and trustworthy, and come back curious.
+## Adding a New Guide
 
-## Principles
-- **Trust first.** No dark patterns, no fake urgency, no bait-and-switch.
-- **Teach and warn, don't promise income.** Show how things work and what to watch out for. Income claims are restricted under Swedish/EU marketing law and look like scam marketing to this audience.
-- **Keep dark web and crypto content educational and safety-first.**
-- **Accessible design:** large text, few steps per screen, simple navigation, and a written or PDF version next to each video.
-- **Near-zero fixed costs** until the first sales: free or cheap tiers, nothing to maintain.
+1. Create a new `.mdx` file in `src/content/guider/`, e.g. `wifi-forklaring.mdx`.
 
-## Language and market
-Swedish first, English later. The structure should allow adding English without rebuilding.
+2. Add the required frontmatter:
 
-## Preliminary delivery design (not final)
-- **Free site:** static site on a host with a built-in CDN (Cloudflare Pages, Vercel or Netlify). Long-cache fingerprinted assets, short TTL for HTML.
-- **Free teaser videos:** posted natively on social platforms, which host them at no cost to me. A copy on the site comes from cheap CDN-backed storage.
-- **Paid videos:** a managed video platform (Cloudflare Stream, Bunny Stream or Mux) that handles transcoding, global delivery and signed expiring links.
-- **Payments:** Stripe, or a merchant of record (Paddle, Lemon Squeezy) that handles EU VAT. Check Swish/card options for Swedish users.
-- **Flow:** payment, webhook records the purchase, backend issues a short-lived signed playback link.
-- **Known limit:** signed links deter casual sharing but cannot stop screen recording. Acceptable at a low price point.
-- **Cost driver:** video viewing hours, not visitor count. Check the margin per sale before choosing a price.
+```yaml
+---
+title: "Din guide-titel"
+description: "En kort beskrivning av guiden, visas i listningsvyn."
+pubDate: 2024-12-01
+category: Hårdvara         # or: Internet, Säkerhet, Operativsystem, Mobiler
+readingTimeMinutes: 6      # optional
+draft: false               # set true to hide from listings
+---
+```
 
-## Risks
-- **Trust:** this audience is a scam target, so anything that looks like "get rich" content hurts the brand.
-- **Legal:** income claims and consumer rules (Konsumentverket); VAT on digital sales in the EU.
-- **Time:** consistent content production by one person.
-- **Piracy:** paid videos can be copied.
-- **Competition:** many free YouTube tutorials exist. The edge is audience fit, tone and trust.
+3. Write the content in Swedish using Markdown/MDX.
 
-## Open questions
-- Expected volume: how many guides and buyers in the first six months?
-- Price point and what exactly is paid versus free.
-- Platform and tooling choices (site builder, video platform, payments).
-- Do I have a name and domain yet?
-- Time is settled: 4-6 hours a day. The open part is how to split it between filming, writing and building the site.
+4. Run `npm run build` to verify it builds without errors.
 
-## Suggested next steps
-1. Pick 3-5 launch topics and film 3 short teasers.
-2. Build a minimal Swedish site on a free host with the free guides.
-3. Post the teasers on Facebook/YouTube and see what response comes.
-4. Only then add the paid tier, once people ask for more.
-5. Return to the brainstorm to finish the design: approaches, architecture, cost math.
+## Deploying to Cloudflare Pages
 
+### Dashboard (recommended)
+
+1. Go to [Cloudflare Pages](https://pages.cloudflare.com/) and create a new project.
+2. Connect to the `haxxsimd/teknikguider` GitHub repository.
+3. Set build settings:
+   - **Build command:** `npm run build`
+   - **Build output directory:** `dist`
+4. Add environment variable: `NODE_VERSION` = `20`
+5. Deploy. Cloudflare Pages will redeploy automatically on every push to `main`.
+
+### Manual CLI
+
+```bash
+npm run build
+npx wrangler pages deploy dist --project-name teknikguider
+```
+
+## i18n — Adding English
+
+The site uses an additive i18n pattern. To add English:
+
+1. Create `src/i18n/en.ts` mirroring `sv.ts` with English translations.
+2. Add `'en'` to the `locales` array in `src/i18n/index.ts`.
+3. Add English pages under `src/pages/en/` (e.g. `src/pages/en/index.astro`).
+
+No existing Swedish files need to change.
+
+## Accessibility
+
+- Body text ≥ 1.25rem (20px) for readability
+- Touch targets ≥ 44×44px for mobile usability
+- Skip-to-content link for keyboard navigation
+- `<nav aria-label>` landmark for screen readers
+- `aria-current="page"` on active navigation link
+- Dark mode via `prefers-color-scheme` media query
+- WCAG AA contrast ratios on all text/background pairs
+- Swedish language declared with `<html lang="sv">`
